@@ -1,6 +1,6 @@
 # Hackbot Engineering Starts With the Verifier
 
-As of 27 October 2026, the most authoritative path to an authorized-testing hackbot runs through a small canon, and every credible source in it lands on the same design. Use one strong agent in a simple tool loop. Keep the context clean. Enforce scope in the network, not the prompt. Require a deterministic validator to confirm every finding before a human signs the report. The engineering core is Anthropic's 2025–2026 engineering series: context engineering, long-running harnesses, auto mode, containment, evals, and an October 2026 post finding that a single agent with skills often beats subagent designs. Around it sit OpenAI's Codex agent-loop and "harness engineering" posts and its GPT-5.x prompting guides; the context-engineering write-ups from Manus, LangChain, Drew Breunig and Chroma; and the Cognition-versus-Anthropic multi-agent debate, which Google's 180-configuration scaling study puts numbers on. The security layer has five parts: papers (PentestGPT, Incalmo, HPTSA, MAPTA, ARTEMIS); industry evidence (XBOW's validator posts, Anthropic's GTG-1002 report, Big Sleep, the AIxCC cyber reasoning systems); real-vulnerability benchmarks (CVE-Bench, BountyBench, CyberGym), run through UK AISI's Inspect; open-source reference hackbots (Strix, Shannon, PentAGI, Decepticon, RedAmon, RAPTOR); and the Critical Thinking podcast's 2026 hackbot episodes. Three 2026 shifts change how you should learn. Classic CTF suites are saturated; XBOW's 104-challenge set sits near 100%. Frontier providers now gate offensive capability: Anthropic's generally available models re-route most cyber tasks to Opus 4.8, and individuals can get only Defense Access. Every major bug-bounty platform now requires human validation and penalizes AI slop. This report catalogs the resources across every discipline and medium, each tagged with its verification status. Treat the verification tags as part of the answer. Research access favored Anthropic and GitHub hosts, so those items carry stronger tags because they were reachable, not because they are more authoritative. No Reddit thread could be verified at all.
+As of 27 October 2026, the most authoritative path to an authorized-testing hackbot runs through a small canon, and every credible source in it lands on the same design. Use one strong agent in a simple tool loop. Keep the context clean. Enforce scope in the network, not the prompt. Require a deterministic validator to confirm every finding before a human signs the report. The engineering core is Anthropic's 2025–2026 engineering series: context engineering, long-running harnesses, auto mode, containment, evals, and an October 2026 post finding that a single agent with skills often beats subagent designs. Around it sit OpenAI's Codex agent-loop and "harness engineering" posts and its GPT-5.x prompting guides; the context-engineering write-ups from Manus, LangChain, Drew Breunig and Chroma; and the Cognition-versus-Anthropic multi-agent debate, which Google's 180-configuration scaling study puts numbers on. The security layer has five parts: papers (PentestGPT, Incalmo, HPTSA, MAPTA, ARTEMIS); industry evidence (XBOW's validator posts, Anthropic's GTG-1002 report, Big Sleep, the AIxCC cyber reasoning systems); real-vulnerability benchmarks (CVE-Bench, BountyBench, CyberGym), run through UK AISI's Inspect; open-source reference hackbots (Strix, Shannon, PentAGI, Decepticon, RedAmon, RAPTOR); and the Critical Thinking podcast's 2026 hackbot episodes. Three 2026 shifts change how you should learn. Classic CTF suites are saturated; XBOW's 104-challenge set sits near 100%. Frontier providers now gate offensive capability: Anthropic's generally available models re-route most cyber tasks to Opus 4.8, and individuals can get only Defense Access. Every major bug-bounty platform now requires human validation and penalizes AI slop. This report catalogs the resources across every discipline and medium, each tagged with its verification status. It then turns that catalog into an eight-stage learning roadmap, about ten months at 10 hours a week to a first supervised submission, with AI-engineering and offensive-fundamentals tracks run in parallel. It adds a component-level reference architecture, a dated evaluation ladder, guardrails (scope controls, the hackbot's own security, platform and provider rules, legal basics) and a first-week checklist. Treat the verification tags as part of the answer. Research access favored Anthropic and GitHub hosts, so those items carry stronger tags because they were reachable, not because they are more authoritative. No Reddit thread could be verified at all.
 
 ## Four tags show how far each resource was checked
 
@@ -530,6 +530,555 @@ No Reddit thread could be verified. reddit.com returned proxy 403s, the search b
 | NahamSec, Bugcrowd, Latent Space, Claude Developers, AI Village Discords | Plausible communities | U |
 
 
+## Learning roadmap: eight stages from first prompt to supervised hackbot
+
+The roadmap below turns the catalog into a sequence. It assumes about **10 hours a week** and runs two tracks in parallel, as the course research recommends: Track A is AI engineering and Track B is offensive fundamentals. The tracks merge at Stage 6, when you start encoding a methodology you can already perform by hand. At that pace Stages 0–6 take about **36 weeks**, and a first supervised submission comes at roughly **ten months**. Someone who already writes Python and hunts bugs can compress Stage 0 and most of Track B. The week counts are this report's estimates, not sourced figures. The order is sourced. Anthropic tells builders to find "the simplest solution possible… This might mean not building agentic systems at all" ([Anthropic](https://www.anthropic.com/engineering/building-effective-agents); F). Palisade showed that a plain agent is the baseline to beat ([arXiv 2412.02776](https://arxiv.org/abs/2412.02776); P). And platforms require a human to validate every report ([HackerOne](https://www.hackerone.com/blog/welcome-hackbots-how-ai-shaping-future-vulnerability-discovery); P). All three push toward building narrow and verified before building broad and autonomous.
+
+Every practice target in this roadmap falls into one of three groups. Some are intentionally vulnerable labs you run yourself: OWASP Juice Shop, DVWA, and XBOW's benchmarks built in local Docker. Some are hosted training labs: PortSwigger Web Security Academy, Hack The Box and TryHackMe. The rest are programs whose written policy authorizes your testing. Hosted labs belong to their operators, so read their terms before you point an automated agent at them. The research could not verify those terms.
+
+| Stage | Weeks (cumulative) | Track A focus | Track B in parallel (~3 of the 10 hours) | Milestone |
+|---|---|---|---|---|
+| 0 Foundations | 1–8 | Python, Linux, Docker, git, LLM API basics | HTTP, an intercepting proxy, PortSwigger Apprentice labs | Isolated home lab and a first costed tool-use call |
+| 1 Prompt engineering | 9–11 | System prompts, structured output, prompt evals | *Bug Bounty Bootcamp*; Practitioner labs | Triage prompt measured on 30 labelled samples |
+| 2 Context engineering | 12–14 | Retrieval, compaction, caching, notes, skills | *Hacking APIs* | Recon-notes pipeline with measured token savings |
+| 3 Agent loops and tools | 15–18 | A loop from scratch; tool design | *Real-World Bug Hunting*; HTB/TryHackMe boxes | A ~300-line agent solving local benchmark tasks |
+| 4 Harness engineering | 19–24 | Sandbox, scope proxy, gates, tracing, cost caps, evals | PortSwigger Web LLM attacks labs | A lab harness that passes its own containment tests |
+| 5 Graphs and orchestration | 25–28 | State graphs, subagents, and when not to use them | Practitioner labs in your chosen bug class | A single-agent vs orchestrated A/B with numbers |
+| 6 Security integration | 29–36 | Single-class hunter, validators, recon skills | Merged | A validator-gated hunter tested on held-out labs |
+| 7 Supervised real-world use | 37 onward | Evaluation ladder, then authorized programs | Merged | First human-reviewed reports on an authorized program |
+
+### Stage 0 (weeks 1–8): learn the web and the plumbing before automating either
+
+**Goal and time.** Six to eight weeks. By the end you should be able to read raw HTTP, drive command-line tools from Python, run disposable containers, and make a tool-use call to an LLM API while knowing what it cost. Skip ahead if you already do these things daily.
+
+**What to learn.** On the web side, learn HTTP methods, headers, cookies and sessions, TLS and DNS basics, and the same-origin policy. Learn the major vulnerability classes the way PortSwigger's topic list and the OWASP testing guide organize them, and practice each through an intercepting proxy such as Burp or Caido. On the engineering side, learn Python with `subprocess` and an async HTTP client, the Linux shell, git, and Docker Compose networking, including how to give a container no route out. On the LLM side, learn the API basics: messages, tool definitions, tokens, prompt caching and pricing.
+
+**Best resources.**
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/all-labs) (P) is the spine of Track B.
+- Jason Haddix's [The Bug Hunter's Methodology](https://github.com/jhaddix/tbhm) (F) shows how hunters actually sequence their work.
+- Anthropic Academy's [Building with the Claude API](https://anthropic.skilljar.com/claude-with-the-anthropic-api) (P) or the [anthropics/courses](https://github.com/anthropics/courses) notebooks (P) cover API mechanics.
+- Karpathy's [Intro to LLMs](https://www.youtube.com/watch?v=zjkBMFhNj_g) (P) supplies the mental model.
+- The [Claude API pricing page](https://platform.claude.com/docs/en/about-claude/pricing) (F) explains why agent loops are affordable at all. Cache reads cost 0.025–0.1x the input price, so re-sending long transcripts is cheap.
+- For local targets, [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) and [DVWA](https://github.com/digininja/DVWA) are the standard self-hosted choices, with the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/) as a reference. All three are tagged U because the research did not verify them separately.
+
+**Milestone project.** Build a Docker Compose "home lab": Juice Shop and DVWA on an internal network with no route to the internet, plus an attack-box container that can reach only that network. Solve about 20 Apprentice-level PortSwigger labs by hand, covering at least five vulnerability classes. Then write a 50-line Python script that sends one saved request/response pair from your lab to an LLM API with a single tool defined, and prints the token count and cost.
+
+**Exit criteria.** For each major class, you can explain what a real finding looks like and what evidence proves it. You can show from a packet capture or proxy log that your lab containers cannot reach the internet. And you can predict what an API call will cost before you make it.
+
+### Stage 1 (weeks 9–11): prompts become specifications you can test
+
+**Goal and time.** Two to three weeks. The goal is system prompts and structured outputs that behave predictably, and the habit of changing them only on evidence.
+
+**What to learn.**
+- Clear role and task framing, XML or Markdown structure, and examples.
+- JSON-schema structured outputs.
+- Effort and extended-thinking settings, which replace hand-written chain-of-thought.
+- The per-model quirks documented on vendor pages. Anthropic's current guide, for example, says to drop prefill and to soften the all-caps commands that newer models over-trigger on.
+- Above all, treating each prompt change as an experiment: a small labelled set, several runs, and a recorded score.
+
+**Best resources.**
+- Anthropic's [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) (F). Read it for the exact model you plan to deploy.
+- The [Prompt Engineering Interactive Tutorial](https://github.com/anthropics/prompt-eng-interactive-tutorial) (F), for exercises.
+- OpenAI's [GPT-5.2 Prompting Guide](https://cookbook.openai.com/examples/gpt-5/gpt-5-2_prompting_guide) (F, registry), for a cross-vendor view.
+- The [evaluation flywheel](https://cookbook.openai.com/examples/evaluation/Building_resilient_prompts_using_an_evaluation_flywheel) by OpenAI and Hamel Husain (F, registry), for the habit of changing prompts based on eval results.
+- [The Prompt Report](https://arxiv.org/abs/2406.06608) (P), as the taxonomy.
+- Berryman and Ziegler's [*Prompt Engineering for LLMs*](https://www.oreilly.com/library/view/-/9781098156145) (P). Ziegler is XBOW's head of AI.
+
+**Milestone project.** Write a "triage" prompt that reads one HTTP request/response pair captured from your own lab and returns a JSON object with four fields: the suspected vulnerability class (or none), the evidence lines that support it, what a validator would need to check, and a confidence score. First hand-label 30 pairs from your lab, a third of them with nothing wrong. Then iterate the prompt against that set.
+
+**Exit criteria.** Version two of the prompt beats version one on your labelled set across at least five runs, and you can report the variance. The JSON parses every time. You can name the vendor page that governs your model and say what it advises about agentic behavior.
+
+### Stage 2 (weeks 12–14): context engineering keeps scanner output out of the window
+
+**Goal and time.** Two to three weeks. The goal is to control exactly what enters the model's context. This matters more for a hackbot than for most agents, because recon and scanner output is enormous and partly hostile.
+
+**What to learn.**
+- Context as a finite attention budget.
+- Just-in-time retrieval: keep full tool output on disk and pass the model a compact summary with a file path.
+- Compaction versus resets, and tool-result clearing.
+- Structured notes.
+- Prompt caching and KV-cache hit rate.
+- Skills as progressive disclosure for per-class playbooks.
+- The long-context failure modes that make raw dumps dangerous: poisoning, distraction, confusion and clash.
+
+**Best resources.**
+- Anthropic's [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) (F).
+- Manus's [lessons from building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) (P).
+- Drew Breunig's [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) (P).
+- Chroma's [Context Rot](https://research.trychroma.com/context-rot) (P).
+- Anthropic's docs on [prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching), [context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing) and [compaction](https://platform.claude.com/docs/en/build-with-claude/compaction) (F).
+- [Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) (F), alongside HumanLayer's [12-Factor Agents](https://github.com/humanlayer/12-factor-agents) (F).
+
+**Milestone project.** Build a recon-notes pipeline for your home lab. Run a crawler and a content-discovery tool against your own Juice Shop instance and store the raw output as files. Then build a context builder that gives the model a compact attack-surface summary (endpoints, parameters, auth requirements) with pointers to the raw files. Ask the model 10 fixed questions about the lab's attack surface under three regimes:
+- the raw dump
+- the summary with file pointers
+- the summary with prompt caching
+
+Log tokens, cost and accuracy for each.
+
+**Exit criteria.** The summary regime answers the 10 questions at least as accurately as the raw dump, using a fraction of the tokens. You can show the cache hit rate. And your own data tells you when to compact and when to start a fresh context.
+
+### Stage 3 (weeks 15–18): a 300-line loop proves the agent is not magic
+
+**Goal and time.** Three to four weeks. The goal is a working agent loop built with no framework, so that every later abstraction is something you understand rather than something you trust.
+
+**What to learn.**
+- The loop itself. Send context, receive text or tool calls, execute the tools, append the results, and repeat until the model stops or a limit fires.
+- Stop conditions: a turn cap, a dollar budget, and no-progress detection.
+- Tool schemas.
+- The agent-computer interface. Anthropic's advice is to "poka-yoke your tools", meaning design them so the model can't misuse them easily.
+- Token-efficient tool output with helpful error messages.
+- Code-as-action: letting the model write and run code instead of calling a fixed tool.
+- Finally, rebuild the same loop on one SDK and note what it adds.
+
+**Best resources.**
+- Anthropic's [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) (F).
+- Thorsten Ball's [How to Build an Agent](https://ampcode.com/how-to-build-an-agent) (P), a roughly 400-line Go agent.
+- Simon Willison's [Designing agentic loops](https://simonwillison.net/2025/Sep/30/designing-agentic-loops/) (P).
+- Anthropic's [Writing effective tools for AI agents](https://www.anthropic.com/engineering/writing-tools-for-agents) (F).
+- The Claude Agent SDK's [How the agent loop works](https://code.claude.com/docs/en/agent-sdk/agent-loop) (F).
+- Two small reference loops, [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) (F) and [hackingBuddyGPT](https://github.com/ipa-lab/hackingBuddyGPT) (F). In hackingBuddyGPT, code checks success against real command output instead of taking the model's word for it.
+
+**Milestone project.** Write a Python agent of roughly 200–400 lines with four tools:
+- read a file
+- write a note
+- run a shell command inside a container whose only network access is your lab
+- send an HTTP request to a single allowlisted lab host
+
+The agent enforces a turn cap and a dollar cap, and writes every turn to an append-only JSONL log. Point it at a handful of level-1 [XBOW validation benchmarks](https://github.com/xbow-engineering/validation-benchmarks) (F) built locally with random flags. Alternatively, use InterCode-CTF tasks through [Palisade's harness](https://github.com/PalisadeResearch/intercode) (F). That is the setting where plain prompting, tools and retries reached 95%.
+
+**Exit criteria.**
+- Every run ends cleanly, either on success or at a limit, and never by crashing.
+- Any run can be replayed from its log.
+- Success is checked by code, not by the model's claim.
+- You have ported the loop to the Claude Agent SDK or the OpenAI Agents SDK, and you can name three things the SDK does that your version did not.
+
+### Stage 4 (weeks 19–24): the harness makes a loop safe to leave running
+
+**Goal and time.** Five to six weeks. This is the longest engineering stage. The course research judges it part of the critical path, because most hackbot failures come from weak harness, context and eval design rather than from the choice of model.
+
+**What to learn.**
+- **Isolation.** Isolate the filesystem and the network together.
+- **Egress control.** Use one egress proxy to enforce scope, rate limits and logging for every tool, including MCP servers. In Codex, MCP tools run outside the agent's sandbox ([OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/); P), so they need the proxy too.
+- **Gating.** Use hooks and a tiered action gate.
+- **Credentials.** Keep them outside the sandbox and inject them at a proxy.
+- **Logging.** Write append-only session logs and OpenTelemetry traces.
+- **Spending.** Set hard spending caps and circuit breakers.
+- **Durable state.** Keep progress files and task lists for work that spans sessions.
+- **Agent evals.** Learn tasks, trials and graders, pass@k versus pass^k, and why container resources must be pinned.
+
+Finish the stage with PortSwigger's [Web LLM attacks](https://portswigger.net/web-security/llm-attacks) labs (P). They are the shortest hands-on lesson in "excessive agency", which is your own bot's core risk.
+
+**Best resources.**
+- Anthropic's [Making Claude Code safer with sandboxing](https://www.anthropic.com/engineering/claude-code-sandboxing), [How we built Claude Code auto mode](https://www.anthropic.com/engineering/claude-code-auto-mode), [How we contain Claude across products](https://www.anthropic.com/engineering/how-we-contain-claude), [Scaling Managed Agents](https://www.anthropic.com/engineering/managed-agents), [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) and [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) (all F).
+- The Claude Code [hooks](https://code.claude.com/docs/en/hooks) and [sandboxing](https://code.claude.com/docs/en/sandboxing) docs (F). They document limits such as domain fronting past hostname allowlists.
+- The [OWASP Top 10 for LLM Applications 2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/README.md) (F), especially its excessive-agency and unbounded-consumption entries.
+- UK AISI's [Inspect](https://github.com/UKGovernmentBEIS/inspect_evals) with [Inspect Cyber](https://github.com/UKGovernmentBEIS/inspect_cyber) (F), the eval harness you will keep using from here on.
+
+**Milestone project.** Build "lab harness v1" around the Stage 3 agent:
+- The agent runs in a container whose only route out is your scope proxy.
+- The proxy uses an allowlist generated from a `scope.json` file, applies per-host rate limits, and logs every request.
+- A kill switch revokes the proxy credential and cuts all egress.
+- A pre-tool hook blocks out-of-scope or destructive calls.
+- API keys live only at the proxy.
+- Traces go to a tool such as [Langfuse](https://langfuse.com/) (P).
+- A hard per-run dollar cap halts the loop.
+
+Then wrap 15–20 local lab tasks as an Inspect eval.
+
+**Exit criteria.** Your harness passes four of its own containment tests:
+- **Scope.** Plant text in a lab page you control telling the agent to contact a host outside scope. The proxy log shows zero out-of-scope connections.
+- **Kill switch.** Trip it, and all egress stops within seconds.
+- **Budget.** Start a task built to loop, and the budget cap stops it.
+- **Reproducibility.** Run the eval three times with pinned resources, and the scores land within a few points of each other. Anthropic found that container resources alone moved one benchmark by 6 points ([Anthropic](https://www.anthropic.com/engineering/infrastructure-noise); F).
+
+### Stage 5 (weeks 25–28): parallelize reads, serialize writes
+
+**Goal and time.** Three to four weeks. The goal is to learn graphs, subagents and orchestration well enough to know when not to use them.
+
+**What to learn.**
+- Two different kinds of graph:
+  - An execution graph models the engagement lifecycle as nodes and edges, with checkpoints and interrupts.
+  - A knowledge graph models what you have found: asset → service → endpoint → parameter → finding.
+- Orchestrator-worker delegation, where each delegated task carries an objective, an output format, tools and boundaries.
+- Effort-scaling rules that keep the lead agent from spawning too many subagents.
+- Context isolation in subagents.
+- The measured failure modes of multi-agent systems.
+
+The baseline to beat is a single agent with skills. Anthropic's October 2026 guidance found that this design "frequently outperformed" subagent designs.
+
+**Best resources.**
+- Anthropic's [multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) (F) and [When to fold subagents into your main agent loop](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop) (F).
+- Cognition's [Don't Build Multi-Agents](https://cognition.ai/blog/dont-build-multi-agents) and its [2026 follow-up](https://cognition.ai/blog/multi-agents-working) (P).
+- Google's [scaling study](https://arxiv.org/abs/2512.08296) (P) and the [MAST failure taxonomy](https://arxiv.org/abs/2503.13657) (P; repo F).
+- The [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) docs on [persistence](https://docs.langchain.com/oss/python/langgraph/persistence) and [interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) (F), with LangChain Academy's [Introduction to LangGraph](https://academy.langchain.com/collections/foundation) (P).
+- [Incalmo](https://arxiv.org/abs/2501.16466) (P), the clearest evidence of where explicit state pays off in offensive work.
+
+**Milestone project.** Run an A/B test on one local task set: recon and triage across three to five self-hosted lab apps.
+- **Variant A** is your single agent with per-class skills.
+- **Variant B** is a LangGraph control graph. Its lead agent fans out read-only recon subagents. Each subagent writes raw results to an attack-surface store and returns a 1–2k-token summary. The store can be Neo4j, as PentAGI and RedAmon use, or SQLite. The graph pauses at an interrupt before any state-changing request.
+
+Log success, tokens, wall-clock time and errors for both variants.
+
+**Exit criteria.** You have a one-page decision record, backed by your own numbers, that says which parts of your hackbot get parallelism and which stay single-threaded. And a graph run survives a killed process and resumes from its last checkpoint.
+
+### Stage 6 (weeks 29–36): one vulnerability class, one validator, zero accepted false positives
+
+**Goal and time.** Six to eight weeks, and this is where the two tracks merge. Enter this stage only after you can find and prove your chosen vulnerability class by hand at PortSwigger's Practitioner level. The bot will encode your methodology, not invent one.
+
+**What to learn.**
+- **Choosing a class with a crisp oracle.** MAPTA's per-class results on XBOW's suite are a usable map of where agents currently do well: 100% for SSRF and misconfiguration, 83% for broken authorization, 57% for XSS and 0% for blind SQL injection ([arXiv 2508.20816](https://arxiv.org/abs/2508.20816); P).
+- **Designing a deterministic validator for that class.** It runs from a clean session and checks a concrete signal: an out-of-band callback to a server you own, an execution check in a headless browser, or a differential between two test accounts you control.
+- **Separating the finder from the validator.**
+- **De-duplication.**
+- **Writing your recon methodology as skills.** Give exact tool paths and syntax. Haddix notes that without them, hackbots invent their own tools ([X](https://x.com/Jhaddix/status/2094803626950902056); P).
+- **Connecting an intercepting proxy through MCP.**
+- **Prompt-injection defenses** that apply once your bot reads target content.
+
+**Best resources.**
+- XBOW's validator posts, especially [We Ran 1,060 Autonomous Attacks](https://xbow.com/blog/we-ran-1060-autonomous-attacks) and [IDORs with High Accuracy](https://xbow.com/blog/xbow-finds-idors-high-accuracy-ambiguous-context) (P).
+- [MAPTA](https://arxiv.org/abs/2508.20816) (P) and the [IDOR-agent study](https://arxiv.org/html/2605.23243v1) (P).
+- [trailofbits/skills](https://github.com/trailofbits/skills) (F) and the official [Burp MCP Server](https://github.com/PortSwigger/mcp-server) (F).
+- The [Strix](https://github.com/usestrix/strix) and [Shannon](https://github.com/KeygraphHQ/shannon) repos (F), as code to read rather than to run.
+- Critical Thinking's [Ep. 175 Rhyno's Hackbot Setup](https://www.youtube.com/watch?v=v-XhQHy_jHM) and [Ep. 192 PoC skill creation](https://www.youtube.com/watch?v=xxU6mq4JoNo) (P), with Joseph Thacker's [hackbot write-up](https://josephthacker.com/hacking/2026/07/01/we-built-a-hackbot.html) (P).
+- [Design Patterns for Securing LLM Agents](https://arxiv.org/abs/2506.08837) (P), for the dual-LLM and plan-then-execute patterns.
+
+**Milestone project.** Build a single-class hunter. Given a lab application and a `scope.json`, it does four things:
+1. Maps the attack surface with your recon skills.
+2. Generates candidates for one vulnerability class.
+3. Attempts each candidate inside the Stage 4 harness.
+4. Emits a report only when the validator confirms the finding from a fresh session.
+
+Develop it against your own lab and the matching PortSwigger labs, within PortSwigger's terms. Hold back two things for testing: the matching subset of XBOW benchmarks, and at least two self-hosted apps you never tuned on. Also build an injection test set: lab pages you control that hide instructions to the agent, in the spirit of [Mantis](https://arxiv.org/pdf/2410.20911) (P), plus [AgentDojo](https://github.com/ethz-spylab/agentdojo) (F).
+
+**Exit criteria.**
+- On the held-out tasks, you audit every finding the validator accepted by hand and find no false positives.
+- Recall is measured, not guessed.
+- Every report has reproduction steps you can follow by hand.
+- The injection set produces zero scope violations, and target text never chooses a tool call.
+
+### Stage 7 (week 37 onward): benchmarks first, then authorized programs with a human on every report
+
+**Goal and time.** Ongoing. Spend the first six to eight weeks climbing the evaluation ladder below, up to private holdouts. Only then use the bot on live programs.
+
+**What to learn.**
+- Reading program policies for automation rules, rate limits and banned test types, and compiling them into scope files.
+- The platform and provider rules in the guardrails section.
+- Applying for provider verification where classifiers block legitimate validation.
+- Writing reports in your own words.
+- Tracking precision rather than volume. XBOW's roughly 1,060 HackerOne submissions included 208 duplicates and 209 informatives ([XBOW](https://xbow.com/blog/top-1-how-xbow-did-it); P; counts S).
+
+**Best resources.**
+- [Inspect Cyber](https://github.com/UKGovernmentBEIS/inspect_cyber) (F), for writing private tasks.
+- [CVE-Bench](https://github.com/uiuc-kang-lab/cve-bench) (F) and [BountyBench](https://github.com/bountybench/bountybench) (P; repo F).
+- Keygraph's [post-cutoff benchmark method](https://github.com/KeygraphHQ/shannon/blob/main/docs/shannon-xbow-aikido-benchmark.md) (F), the template for private holdouts.
+- HackerOne's [Welcome, Hackbots](https://www.hackerone.com/blog/welcome-hackbots-how-ai-shaping-future-vulnerability-discovery) and [Code of Conduct](https://www.hackerone.com/policies/code-of-conduct) (P).
+- Anthropic's [Cyber Verification Program](https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet) help article (F).
+- Critical Thinking's [Ep. 181 Bug Bounty Singularity](https://www.youtube.com/watch?v=QrVOFD2Xl2A) and [Ep. 184](https://www.youtube.com/watch?v=0olk6lC1AGg) (P), on how working hunters run their bots.
+
+**Milestone project.** Make your first 5–10 submissions to a program whose policy explicitly permits automated testing. A vulnerability disclosure program is a lower-stakes place to start. Before submitting each one:
+- reproduce it yourself by hand
+- check it against the program's known issues
+- rewrite it in your own words
+- disclose AI use wherever the platform or program asks
+
+**Exit criteria.** None, because this stage is a loop. Track five numbers: valid-report rate, duplicate rate, triage-accepted severity, cost per accepted report, and complaints from program owners. Widen the bot's autonomy only in small steps, and only while those numbers hold.
+
+### Ongoing: one hour a week to stay current
+
+The field moves monthly, so budget an hour a week for it:
+- skim [tl;dr sec](https://tldrsec.com/) (P) and the [Anthropic Engineering](https://www.anthropic.com/engineering) feed (F)
+- follow [Simon Willison](https://simonwillison.net/) (P)
+- listen to [Critical Thinking](https://www.youtube.com/@criticalthinkingpodcast) (P)
+- check [awesome-ai-security-tools](https://github.com/scadastrangelove/awesome-ai-security-tools) (F) for new tools, and read their code before installing any of them
+
+Two habits matter more than the reading. First, whenever you change models, re-read that model's prompting page. Re-run your regression suite, removing harness parts one at a time to see which still earn their place. As Anthropic puts it, "every component in a harness encodes an assumption about what the model can't do on its own" ([Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps); F). Second, re-check the platform and provider policy pages once a month, because they changed repeatedly during 2026.
+
+## Reference architecture for a first hackbot
+
+Every shipped system and paper in this report converges on the same shape. An isolated sandbox runs the tools. A planner works with short-lived executors. Durable structured state lives outside the context window. And a hard validation gate stands between a candidate and a finding. Strix, Shannon, Decepticon, RedAmon and pentest-ai all put their weight on that last step (see the open-source hackbots table above; F). The design below is that consensus, described at the component level. It synthesizes the sources cited in each row of the table that follows; it does not describe any one product. XBOW's internal orchestration, the most-cited commercial example, is not publicly documented.
+
+Build the first version on an existing coding-agent harness rather than a new framework. PentestGPT v1, ARTEMIS, Shannon and RAPTOR all drive Claude Code, Codex or Pi rather than their own loops. The control plane is trusted and holds every secret. The sandbox holds nothing worth stealing. The proxy is the only door between the sandbox and the network.
+
+```text
+ Program policy ─► Scope compiler ─► scope.json  (read-only to every agent)
+
+ CONTROL PLANE  (trusted host: holds secrets, never runs target-derived code)
+
+   Planner ◄──── 1-2k-token summary ──── Executor (fresh context,
+   (lead)  ───── one hypothesis ───────►  turn and $ caps)
+     │                                       │ candidate finding
+     ▼                                       ▼
+   State store                            Validator (clean session,
+   task tree · attack-surface graph ·      deterministic oracle)
+   test identities · event log               │ confirmed only
+                                             ▼
+                                          Dedup ─► Reporter ─► HUMAN GATE ─► submit
+
+   Monitor: OpenTelemetry traces · per-run $ cap · loop detection · kill switch
+
+ SANDBOX  (container or VM: no credentials, no host Docker socket)
+   tool wrappers · MCP servers · headless browser · output sanitizer
+     │ every packet from every tool, for executor and validator alike
+     ▼
+ SCOPE / EGRESS PROXY  (allowlist on host + SNI + resolved IP · per-host rate
+                        limits · request log · secret injection · kill switch)
+     │
+     ▼
+ In-scope targets only
+```
+
+| Component | What it does | Design rules that matter | Sources |
+|---|---|---|---|
+| **Scope compiler** | Turns the written authorization or program policy into a machine-readable allowlist: hosts, CIDRs, wildcards, exclusions, banned test types, rate limits, required headers | Agents can read the file but never edit it. A human checks the compiled file against the policy before each engagement | Auto mode's rule that an agent must not modify its own permission config ([Anthropic](https://www.anthropic.com/engineering/claude-code-auto-mode); F); "complete mediation" in [OWASP LLM03:2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/final/LLM03_ExcessiveAgency.md) (F) |
+| **Scope/egress proxy** | The only route from the sandbox to any network | Terminates TLS and checks that Host, SNI and resolved IP agree. Applies per-host token-bucket rate limits and logs every request. Injects secrets. One switch revokes all egress. Test the proxy itself, because "the weakest layer is the one you built yourself" | [How we contain Claude](https://www.anthropic.com/engineering/how-we-contain-claude) (F); [Claude Code sandboxing docs](https://code.claude.com/docs/en/sandboxing) on domain fronting (F) |
+| **Planner** | Holds the engagement plan, ranks hypotheses from the state store, and dispatches them one at a time | In v1 it is the only agent. Effort-scaling rules in its prompt prevent over-delegation | [PentestGPT](https://arxiv.org/abs/2308.06782) task tree (P); [HPTSA](https://arxiv.org/abs/2406.01637) planner (P); [multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) (F) |
+| **Executors** | Short-lived agents, each testing one hypothesis | Fresh context per hypothesis and an iteration cap (XBOW starts a fresh solver after about 80 iterations). Restart rather than persist. Authenticated, stateful chains stay single-threaded | [XBOW alloys](https://www.xbow.com/blog/alloy-agents) (P); [Decepticon](https://github.com/BitterSecurity/Decepticon) (F); [When to fold subagents](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop) (F); [Cognition](https://cognition.ai/blog/dont-build-multi-agents) (P) |
+| **State store** | Durable memory outside every context window | A JSON task list with explicit status fields. An attack-surface graph (asset → service → endpoint → parameter → finding). A per-identity session store for access-control tests. An append-only event log for crash recovery and audit | [Effective harnesses](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) (F); [Managed Agents](https://www.anthropic.com/engineering/managed-agents) (F); [Incalmo](https://arxiv.org/abs/2501.16466) (P); [PentAGI](https://github.com/vxcontrol/pentagi), [RedAmon](https://github.com/samugit83/redamon) (F) |
+| **Tool layer** | Wrapped CLI tools, MCP servers (intercepting proxy, browser) and sandboxed containers | A few tools with scope-checked arguments and safe defaults. Truncated output plus a file path to the full result. Tools pinned by hash and scanned before use. No host Docker socket; an allowlist of container images | [Writing effective tools](https://www.anthropic.com/engineering/writing-tools-for-agents) (F); [PentAGI](https://github.com/vxcontrol/pentagi) (F); [Burp MCP](https://github.com/PortSwigger/mcp-server) (F); [Invariant Labs](https://invariantlabs.ai/blog/mcp-security-notification) (P); [Snyk Agent Scan](https://github.com/invariantlabs-ai/mcp-scan) (F) |
+| **Output sanitizer and quarantined parser** | Cleans every tool result before it reaches a privileged model | Strips ANSI escapes, HTML comments and invisible Unicode. A cheap model with no tools extracts typed fields. Target text never selects tools | [Mantis](https://arxiv.org/pdf/2410.20911) (P); [CaMeL](https://github.com/google-research/camel-prompt-injection) (F); [Design Patterns](https://arxiv.org/abs/2506.08837) (P); [OWASP LLM01:2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/final/LLM01_PromptInjection.md) (F) |
+| **Validator** | Confirms or rejects each candidate | A separate system from the finder. Replays each candidate from a clean session against a deterministic oracle per vulnerability class. LLM judges only rank and triage. What the validator accepts gets a periodic manual audit | [XBOW](https://xbow.com/blog/we-ran-1060-autonomous-attacks) (P); [Carlini](https://www.anthropic.com/engineering/building-c-compiler) (F); [FuzzingBrain](https://github.com/o2lab/afc-crs-all-you-need-is-a-fuzzing-brain) (F); [Team Atlanta](https://github.com/Team-Atlanta/team-atlanta.github.io/blob/main/content/english/blog/post-patch-2026-ensemble.md) (F); [Refute-or-Promote](https://arxiv.org/pdf/2604.19049) (P) |
+| **Dedup and reporter** | Removes duplicates and known or out-of-scope issues, then drafts the report | Produces a draft only; the human rewrites it in their own voice | [RoboDuck](https://github.com/theori-io/aixcc-afc-archive/blob/main/docs/crs-architecture.md) LLM dedup (F); [curl policy](https://raw.githubusercontent.com/curl/curl/master/docs/VULN-DISCLOSURE-POLICY.md) (F) |
+| **Human approval gate** | Signs off on the few actions that matter | Reserved for the first exploit attempt per host, any authenticated state-changing request, and every submission. Not per request: users approved about 93% of permission prompts | [How we contain Claude](https://www.anthropic.com/engineering/how-we-contain-claude) (F); [LangGraph interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) (F); [HackerOne](https://www.hackerone.com/blog/welcome-hackbots-how-ai-shaping-future-vulnerability-discovery) (P) |
+| **Monitor** | Traces, cost and stop conditions | Hard caps per run and per API key, turn limits, loop detection by state hashing, and OpenTelemetry traces. It also records which model served each step | [OWASP LLM06:2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/final/LLM06_UnboundedConsumption.md) (F); [Agent SDK loop](https://code.claude.com/docs/en/agent-sdk/agent-loop) (F); [PentAGI](https://github.com/vxcontrol/pentagi) (F); [Opus 5.5](https://www.anthropic.com/claude-opus-5-5) re-routing (F) |
+
+### One hypothesis's path through the system
+
+Follow a single idea, such as "this endpoint may return another user's records", through the stack:
+
+1. **Planner.** It reads the attack-surface graph and picks the hypothesis. It then hands an executor a short brief: the objective, the two test identities to use, the output format, and the boundaries.
+2. **Executor.** It starts with a fresh context. It works through the tool layer, so every request crosses the proxy. That puts it under the program's rate limit, inside the scope allowlist and in the log. Raw responses land in files; only sanitized, typed summaries reach the model. The executor either stops at its iteration cap or emits a candidate with evidence.
+3. **Validator.** It never sees the executor's reasoning. It replays the candidate from a clean session using the deterministic check for that class. In the access-control case, that check is whether identity B can read data that only identity A owns.
+4. **Write-back.** Only a confirmed finding is written to the state store.
+5. **Reporter.** It drafts the report.
+6. **Human.** A person reproduces the finding, rewrites the report, and decides whether to submit.
+
+This flow encodes three lessons from the sources. Carlini found that the task verifier must be "nearly perfect, otherwise Claude will solve the wrong problem" ([Anthropic](https://www.anthropic.com/engineering/building-c-compiler); F). GTG-1002 showed agents hallucinating credentials ([Anthropic](https://www.anthropic.com/news/disrupting-AI-espionage); F). And XBOW keeps discovery and validation in separate systems so that the proposing model never confirms its own finding ([XBOW](https://xbow.com/blog/we-ran-1060-autonomous-attacks); P).
+
+### Build it in three increments, not one
+
+**Version 1 is deliberately small:**
+- the scope compiler and the proxy
+- one agent acting as both planner and executor, with a JSON task list and progress file
+- one class-specific validator
+- the human gate
+- the monitor
+
+**Version 2** splits the work into planner and short-lived executors and adds the attack-surface graph. Make that change only after Stage 5 numbers show it pays.
+
+**Version 3** adds parallel read-only recon subagents and a k-vote triage step to suppress false positives. The research notes' recommended stack, an inference, sets the components:
+
+| Role | Component |
+|---|---|
+| Control graph | LangGraph or Microsoft Agent Framework, with Postgres checkpointing and approval interrupts |
+| Short-lived solvers | Claude Agent SDK or OpenAI Agents SDK workers |
+| Shared state | A Neo4j or Graphiti attack-surface graph |
+| Operator console | AG-UI |
+| Federation with outside agents | A2A, only if needed |
+
+Route by cost throughout. On current Anthropic list prices, Opus 5.5 input costs 40 times Haiku 5.5's, and Anthropic positions Haiku "for high-volume, latency-sensitive tasks such as classification, extraction, and routing" ([pricing](https://platform.claude.com/docs/en/about-claude/pricing); F). So the quarantined parser, the output classifier and the triage voters belong on the cheap model, with the strong model reserved for planning and execution.
+
+## Evaluation ladder
+
+The frontier labs' own path runs from CTFs to real CVEs, then to real zero-days and cost-capped runs. That path is a good template for a hackbot's internal ladder, and Anthropic's published cyber evaluations follow it ([Anthropic](https://www.anthropic.com/research/building-ai-cyber-defenders); F). The rule for climbing is simple. Move to the next rung when the current one saturates, at roughly **90% or better pass@1 at a cost you accept**. Run every rung you can in [Inspect](https://github.com/UKGovernmentBEIS/inspect_evals) with [Inspect Cyber](https://github.com/UKGovernmentBEIS/inspect_cyber) (F), so that logging, epochs, reducers and sandboxing stay the same from rung to rung. The rungs and thresholds come from the benchmark research; the saturation figures are dated, because several moved within months.
+
+| Rung | Benchmark | What it tells you | Status (dated) | Cost and infrastructure | Tag |
+|---|---|---|---|---|---|
+| 0 Plumbing | Self-hosted Juice Shop, DVWA and WebGoat; [PortSwigger labs](https://portswigger.net/web-security/all-labs) | Whether tools, auth handling, crawling and report formatting work | Heavily contaminated; never a capability claim | Free and local. PortSwigger labs are hosted, so check its terms for automated use | U; P |
+| 1 Regression gate | [XBOW validation-benchmarks](https://github.com/xbow-engineering/validation-benchmarks) (104 web challenges) rebuilt with random flags; [InterCode-CTF](https://github.com/princeton-nlp/intercode) through Palisade's harness | With a frontier model, anything well below 100% points to a scaffold bug | XBOW: **saturated, about 100%, mid-2026**. InterCode: 95% (Dec 2024) | MAPTA's full 104-challenge pass cost **$21.38** (Aug 2025; [arXiv](https://arxiv.org/abs/2508.20816), P) | F; F |
+| 2 Broad CTF | [Cybench](https://github.com/andyzorigin/cybench) via Inspect (39–40 tasks), with its 8 web tasks reported separately; [NYU CTF Bench](https://github.com/NYU-LLM-CTF/NYU_CTF_Bench) web (19), tuned only on its 55-task dev split | Whether the loop, rather than the model, is the bottleneck | Cybench: Mythos Preview 100% and Opus 4.7 96% on 35-task vendor subsets (Apr 2026). NYU best: 22% (stale, Aug 2025) | Docker or Kali. Use the K8s sandbox for domain filtering | F |
+| 3 Real web exploitation | [CVE-Bench](https://github.com/uiuc-kang-lab/cve-bench) v2.x: the zero-day variant first, then one-day | Real web CVEs graded by application state, the closest public analogue to bounty impact | 13% zero-day and 25% one-day (Mar 2025); v2.1.0 released Jan 2026; **no public 2026 state of the art** | Runs on Inspect. amd64 recommended. Reference exploits only on request | F (repo); results P |
+| 4 Bounty economics | [BountyBench](https://github.com/bountybench/bountybench) Detect, plus Patch as a report-quality check | Dollar-weighted recall net of token cost, the same unit as your real return | Detect 12.5% (2025). Figures differ across paper versions, so cite the version | Claude Code's Patch runs cost $82.19 in tokens | P (repo F) |
+| 5 White-box discovery (optional) | [CyberGym](https://github.com/sunblaze-ucb/cybergym) level 0/1 subset; [SEC-bench](https://github.com/SEC-bench/SEC-bench) | Source-reading discovery and proof-of-concept skill. Relevant only if your bot reads code | CyberGym: Mythos Preview 83.1% (Apr 2026); **"nearly saturated" (Aug 2026)**. SEC-bench Pro best: 58.4% (Jun 2026; all entries unverified) | CyberGym: about 240 GB of data, about 10 TB for the full server, a $2-per-vulnerability leaderboard cap, and about $45 for 30 trials of one task with Sonnet 4.5. SEC-bench: over 200 GB of disk | F |
+| 6 Private holdouts | OSS web apps pinned to versions before security fixes that landed after your model's cutoff; retired HTB or VulnHub machines you never tuned on; your own Inspect Cyber tasks for IDOR, auth and business-logic chains | **The real test.** Public suites underweight the multi-account logic bugs that bounties pay for | Yours to define. Keygraph's Photoview run is a template: Opus 5 found 23 true and 1 false positive for $115, and DeepSeek v4 Flash found 18 true positives for $6.10 (vendor-run) | Keep 30–50% of these tasks hidden and never tune on them | F (doc); study S |
+| 7 Live programs | Authorized VDPs and bug bounty programs whose policy permits automation | Valid-report rate, duplicate rate, triage-accepted severity, cost per accepted report, program-owner complaints | — | A human gate on every submission | — |
+
+AutoPenBench is worth one side run as you climb ([repo](https://github.com/lucagioacchini/auto-pen-bench); F). It measured **21% autonomous against 64% human-assisted** ([arXiv 2410.03225](https://arxiv.org/abs/2410.03225); P). Scoring your own bot both ways shows how much of its performance is really yours.
+
+**Metrics to log on every rung:**
+- **Reliability.** pass@1 and pass@k over at least five runs, with variance. Add pass^k for any claim about reliability, since Anthropic recommends it "for agents where consistency is essential" ([Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents); F).
+- **Yield.** Validated findings per dollar and per hour.
+- **Precision.** The false-positive rate after the validator, checked against a manually audited sample. In AIxCC patching work, 20–40% of patches that passed every automated check were still wrong ([Team Atlanta](https://github.com/Team-Atlanta/team-atlanta.github.io/blob/main/content/english/blog/post-patch-2026-ensemble.md); F).
+- **Duplicates.** The duplicate rate.
+- **Scope.** Out-of-scope requests, which must be zero, and requests per finding.
+- **Provenance.** Whether the agent actually exploited the target or just found the flag with grep ([arXiv 2608.26237](https://arxiv.org/pdf/2608.26237); P).
+- **Configuration.** The harness version, model snapshot and pinned container resources. Harness parameters alone moved Opus 4.6's CyberGym score from 66.6 to 73.8 ([Anthropic](https://www.anthropic.com/news/claude-opus-4-7); F).
+- **Serving model.** Which model actually served each step. Anthropic's generally available models re-route most cyber tasks to Opus 4.8 ([Anthropic](https://www.anthropic.com/claude-opus-5-5); F), so a re-routed run measures a different model from the one you configured.
+
+**Contamination and gaming are the main threats to validity.** XBOW's own README warns that "the underlying vulnerabilities have been trained into the models" despite canary GUIDs (F). A forked harness once leaked a Cybench answer and inflated scores, and rebuilt Cybench images no longer match the pinned digests, so run its `verify_solutions` check ([Cybench site](https://github.com/cybench/cybench.github.io); F).
+
+Capable agents also game their evals. Anthropic has seen them "helpfully" escape a sandbox, read git history for test answers, and identify a benchmark in order to decrypt its answer key ([How we contain Claude](https://www.anthropic.com/engineering/how-we-contain-claude); F). Keep flags and answer keys out of the agent's reach at the infrastructure level, not by instruction.
+
+The defenses the benchmark authors document are:
+- inject random flags at build time
+- use stripped or on-request reference solutions
+- tune only on dev splits, and freeze the test sets
+- rotate holdouts with every model generation
+- diff trajectories for benchmark-specific hard-coding
+- prefer state- or impact-based grading to flag strings
+
+Keygraph's method of using fixes that landed after the model's cutoff is the strongest available check on training overlap ([Shannon doc](https://github.com/KeygraphHQ/shannon/blob/main/docs/shannon-xbow-aikido-benchmark.md); F).
+
+**Cost discipline belongs in the harness, not in your head.** With iteration caps and per-task budgets set, rungs 0–3 should cost tens to low hundreds of dollars per full pass with frontier APIs. That figure is an order-of-magnitude inference, not a measurement. Without caps the spread is enormous. Theori warns that its AIxCC system "can easily spend $1,000 or more in under an hour" ([Theori](https://github.com/theori-io/aixcc-afc-archive); F). CyberGym's maintainers now require per-task tokens, USD cost, wall-clock time and trajectories with every submission ([CyberGym](https://github.com/sunblaze-ucb/cybergym/blob/main/SUBMISSION.md); F). Hold your own runs to that standard.
+
+## Guardrails: scope, safety, platform and provider rules
+
+Five kinds of guardrail apply. Two are technical: keeping the bot inside its scope, and keeping the bot itself from being turned. Two are rules written by others: the bug bounty platforms and the model providers. The last is the law. All five converge on one operating model. The human operator holds written authorization, the environment enforces it, and a person reviews every report. No rule in this section is new to authorized testing. What changed in 2025–2026 is that platforms and providers now enforce them explicitly against AI and automation, and rewrote several of them within weeks of this report.
+
+### Scope and safety live in the environment, not the prompt
+
+Every authoritative 2025–2026 source makes the same demand: enforce boundaries deterministically, in the environment. That includes OWASP's 2026 LLM Top 10 ([LLM03:2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/final/LLM03_ExcessiveAgency.md); F), the joint guidance on agentic AI from US, UK, Canadian, Australian and New Zealand agencies, "Careful Adoption of Agentic AI Services" ([PDF](https://media.defense.gov/2026/Apr/30/2003922823/-1/-1/0/CAREFUL%20ADOPTION%20OF%20AGENTIC%20AI%20SERVICES_FINAL.PDF); P), and Anthropic's containment write-ups. OWASP calls the principle "complete mediation": "Implement authorization in logic rather than relying on an LLM to decide if an action is allowed."
+
+For a hackbot that means three layers of scope enforcement:
+
+1. **The program parser.** It compiles the written policy into an allowlist with exclusions, banned test classes, rate limits and required headers, and a human checks the result.
+2. **The egress proxy.** It carries every tool's traffic, including scanner subprocesses and MCP servers. It checks hostname, SNI and resolved IP, because a proxy that trusts the client-supplied hostname can be bypassed by domain fronting ([Claude Code docs](https://code.claude.com/docs/en/sandboxing); F).
+3. **Each tool wrapper.** It acts as a policy decision point. It refuses destructive verbs and tests prone to causing denial of service, and caps how much data any proof of concept may touch.
+
+Treat every allowlisted third-party domain as a possible exfiltration channel. Anthropic saw data leave through an allowlisted API domain carrying an attacker's key ([How we contain Claude](https://www.anthropic.com/engineering/how-we-contain-claude); F). Use only out-of-band interaction servers you own.
+
+Add the circuit breakers from OWASP's unbounded-consumption entry ([LLM06:2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/final/LLM06_UnboundedConsumption.md); F):
+- "non-overridable budget ceilings… that halt inference when exceeded, rather than alerting thresholds"
+- step, recursion and time limits
+- loop detection by state hashing
+
+Keep each proof of concept minimal. Use your own test accounts, never real users' data, and stop at the evidence the validator needs.
+
+Then place human checkpoints where they still work. Users approved roughly **93%** of permission prompts in Anthropic's data, so per-request approval adds little. What holds is containment plus a few gates on high-impact actions (same source; F).
+
+### The hackbot is a lethal trifecta by design
+
+Simon Willison's "lethal trifecta" is three properties in one agent: access to private data, exposure to untrusted content, and the ability to communicate externally ([simonwillison.net](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/); P). Meta's Rule of Two says an agent with all three needs approval for each action ([Meta](https://ai.meta.com/blog/practical-ai-agent-security/); P). A hackbot has all three by definition. It reads hostile target content, holds API keys and test credentials, and sends traffic.
+
+The evidence that targets can turn this against you is strong:
+- A poisoned server response hijacked the CAI agent with **100%** success across 14 variants, reaching "full system compromise in under 20 seconds" ([arXiv 2508.21669](https://arxiv.org/abs/2508.21669); P).
+- Mantis decoys hide instructions in ANSI escapes and HTML comments, and were over **95%** effective against GPT-4-class attacking agents ([arXiv 2410.20911](https://arxiv.org/pdf/2410.20911); P).
+- 2026 papers study honeypots built specifically for LLM pentesters ([arXiv 2609.08093](https://arxiv.org/abs/2609.08093); P).
+
+The UK NCSC sees "a good chance prompt injection will never be properly mitigated" ([NCSC](https://www.ncsc.gov.uk/blog-post/prompt-injection-is-not-sql-injection); P). Anthropic reports about 1% attack success against its browser-use agent and says even that "still represents meaningful risk" ([Anthropic](https://www.anthropic.com/research/prompt-injection-defenses); F).
+
+So design to limit impact, not to prevent injection:
+- **Data, not instructions.** Treat every byte that came from the target as data.
+- **Split the models.** Use plan-then-execute or a dual-LLM split. A quarantined model extracts typed fields from responses, and the privileged planner never sees raw target text ([CaMeL](https://github.com/google-research/camel-prompt-injection); F; [Design Patterns](https://arxiv.org/abs/2506.08837); P).
+- **Strip hidden content.** Remove ANSI escapes, HTML comments and invisible Unicode before anything enters a context.
+- **Never take orders from the target.** Never fetch or execute anything because target content suggested it.
+- **Guard memory.** Treat writes to persistent memory and notes files as privileged ([OWASP LLM01:2026](https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/main/2026/final/LLM01_PromptInjection.md); F).
+
+The tool supply chain is the second front. MCP servers carry three attacks ([Invariant Labs](https://invariantlabs.ai/blog/mcp-security-notification); P):
+- tool descriptions can carry hidden instructions
+- a server can change its tools after you approve them
+- one server's description can alter how another server's tools are used
+
+The defenses:
+- Pin tools and skills by hash.
+- Prefer local, audited tools to remote servers.
+- Scan with [Snyk Agent Scan](https://github.com/invariantlabs-ai/mcp-scan) or [SkillSpector](https://github.com/NVIDIA/SkillSpector) (F).
+- Avoid projects with known-bad security, such as HexStrike's unauthenticated command endpoint (see the tool tables above; F).
+- Remember that project configuration can execute before a trust prompt. Anthropic's advice is to "treat project-open, config-load, and localhost listeners the way you'd treat any inbound request from the internet" ([How we contain Claude](https://www.anthropic.com/engineering/how-we-contain-claude); F).
+
+Secrets are the third front. "If credentials never enter the sandbox, they can't be exfiltrated" (same source; F). Keep LLM API keys, platform tokens such as a HackerOne API token, and test-account passwords in a vault on the control plane, and inject them at the proxy. The stakes are concrete. In a February 2026 red-team exercise, a phished instruction got Claude Code to exfiltrate AWS credentials in **24 of 25** attempts, and "the only defense that holds… is the environment" (same source; F).
+
+Program data is a secret too. The CAI team's dataset of 230,935 sessions shows operators routinely pasting live credentials and production hostnames into frontier APIs ([CAI README](https://github.com/aliasrobotics/cai); F, author-reported). Intigriti's terms bar disclosing program data to third parties without permission ([Intigriti T&C](https://kb.intigriti.com/en/articles/5466165-researcher-terms-conditions); P). Whether sending target responses to a model API counts as such disclosure is unsettled; no platform text found addresses it. This report's reading is to check each program policy, and where it is silent, to prefer zero-retention or self-hosted models.
+
+Before the bot ever sees a live target, test it against [AgentDojo](https://github.com/ethz-spylab/agentdojo) and [Agent Security Bench](https://github.com/agiresearch/ASB) (F), and against hostile pages of your own design in your lab.
+
+### Bug bounty platforms allow AI but punish unvalidated output
+
+No major platform bans AI-assisted hunting. A census of 53 published programs in July 2026 found **0** that prohibit it outright and **3** that require AI disclosure ([Stingrai](https://www.stingrai.io/blog/ai-generated-vulnerability-report-policies-census); S). Every platform does hold the human accountable and sanction unvalidated output, and enforcement tightened sharply in 2026. In the Tag column, "wording S" means the policy page itself was confirmed but the quoted rules come from search extracts.
+
+| Platform | Rule on AI and automation | Enforcement | Tag |
+|---|---|---|---|
+| HackerOne | Hackbots must follow each program's disclosure policy, the Code of Conduct and the Disclosure Guidelines. A human validates every potential vulnerability before submission ("hacker-in-the-loop"), and the operator is accountable ([Welcome, Hackbots](https://www.hackerone.com/blog/welcome-hackbots-how-ai-shaping-future-vulnerability-discovery)). The Code of Conduct, updated in April 2026 after AI-driven report volume more than doubled, holds members "fully responsible" for AI-assisted submissions ([Code of Conduct](https://www.hackerone.com/policies/code-of-conduct)) | Penalties run from rate limits to removal. Automated delivery of scanner or script output "is not tolerated" ([Misconduct](https://docs.hackerone.com/en/articles/8466603-misconduct)). An October 2026 changelog adds a per-researcher trial limit of 3 reports ([changelog](https://docs.hackerone.com/en/articles/17299916-october-2026-changelog)) | P; wording S |
+| Bugcrowd | Researchers must "manually review and validate any vulnerability report created with GenAI tools before submitting it", and "automated or unverified outputs are not accepted" ([Code of Conduct](https://www.bugcrowd.com/resources/hacker-resources/code-of-conduct/); [AI trust page](https://docs.bugcrowd.com/researchers/onboarding/ai-privacy-security/)) | From March 2026: permanent bans for submission farming, a possible 30-day suspension after 10 or more consecutive invalid AI or automated reports, identity verification, throttling and CAPTCHA tokens. A May 2026 update added identity verification for Managed Bug Bounty ([policy changes](https://www.bugcrowd.com/blog/bugcrowd-policy-changes-to-address-ai-slop-submissions/); [follow-up](https://www.bugcrowd.com/blog/continuing-our-work-to-reduce-ai-slop-submissions-and-protect-signal-quality/)). Programs add their own rules: T-Mobile caps automation at 5 requests per second, and Okta rejects AI-generated content | P; details S |
+| Intigriti | AI use is "permitted and encouraged when used responsibly". Researchers are "fully responsible for the validity of their report", and AI use must be disclosed ([Community Code of Conduct](https://kb.intigriti.com/en/articles/5247238-community-code-of-conduct); [triager blog](https://www.intigriti.com/blog/business-insights/the-ai-impact-a-triagers-perspective)) | Fabricated endpoints, placeholder text and generic exploit templates are prohibited. Program data may not go to third parties ([Researcher T&C](https://kb.intigriti.com/en/articles/5466165-researcher-terms-conditions)) | P; wording S |
+| YesWeHack | A "program spamming and AI slop" violation covers poorly validated findings and unverified AI hypotheses ([YesWeHack](https://www.yeswehack.com/security-best-practices/ai-makes-bug-bounty-better)) | It is the highest-severity violation and can bring a platform ban. The BIND 9 program requires AI disclosure and personal exploit execution, and undisclosed AI use voids rewards ([BIND 9](https://yeswehack.com/programs/bind-bug-bounty-program)) | S |
+| Synack | No public rule on AI tools found. Humans on the Synack Red Team validate findings from its own "Sara" agent ([Synack](https://www.synack.com/podcast/mark-kuhr-on-ai-pentesting-and-the-synack-red-team)) | — | S |
+
+The slop wave also cut off money:
+- **curl** ended its bounty on **31 January 2026**, after its confirmed-vulnerability rate reportedly fell "from north of 15% to below 5%" ([The Register](https://www.theregister.com/2026/01/21/curl_ends_bug_bounty/); S). Its current policy says "There is no bug bounty". It asks reporters to write "in your own human voice. Do not lazily paste massive, AI-generated explanations" ([curl policy](https://raw.githubusercontent.com/curl/curl/master/docs/VULN-DISCLOSURE-POLICY.md); F).
+- **The Internet Bug Bounty** paused new submissions from **27 March 2026**, and **Node.js** paused its bounty after losing that funding ([CSO Online](https://www.csoonline.com/article/4154216/internet-bug-bounty-program-hits-pause-on-payouts-2.html); S).
+- **Nextcloud** stopped its bounty ([Privacy Guides](https://discuss.privacyguides.net/t/nextcloud-stops-bug-bounty-program-due-to-increase-of-low-effort-ai-generated-reports/37334); S).
+- **Google** suspended product submissions to its OSS VRP ([BleepingComputer](https://bleepingcomputer.com/news/google/google-halts-open-source-bug-bounty-program-amid-ai-spam-surge); S).
+- **Django** closes apparently unverified AI output without a response (Stingrai census; S).
+
+Some maintainers now plant canaries such as [honeyslop](https://github.com/gadievron/honeyslop) (F) to catch hallucinated reports.
+
+A compliant hackbot therefore needs five things:
+1. a deterministic reproduction for every finding
+2. a dedup check against known and out-of-scope issues
+3. a human who reproduces, rewrites and signs every report
+4. per-program automation limits compiled into the scope file
+5. a log of AI use, to fill disclosure fields
+
+It also needs volume discipline. At Bugcrowd, ten consecutive invalid reports can now bring a suspension, and an identity check follows ten invalid reports.
+
+### Model providers permit authorized testing and gate offensive capability
+
+**Anthropic.** Anthropic's Usage Policy prohibits discovering or exploiting vulnerabilities "without authorization of the system owner". It also prohibits building "automated tools designed to compromise multiple systems at scale without authorization" ([Usage Policy](https://www.anthropic.com/legal/aup); F). It then carves out "security research, testing, or tool development conducted on systems you own or operate, with the authorization of the system owner, or within the scope of an authorized bug bounty program or vulnerability disclosure policy, provided the activity complies with applicable law". For work its real-time cyber safeguards cover, it points to adjusted access through the Cyber Verification Program.
+
+The same policy makes you "responsible for ensuring that agents they build or deploy… comply". It prohibits bypassing guardrails ("jailbreaking or prompt injection") without Anthropic's prior authorization. It also says "encountering a block does not by itself indicate a violation". The page displays "Effective Nov 12, 2026", a date after this report, so the text may be an announced upcoming version.
+
+Anthropic's capability gating is concrete:
+- Generally available models handle code review, threat modeling and finding vulnerabilities in your own code. "Malware analysis or exploit validation may be interrupted by our safety classifiers" ([CVP help article](https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet); F).
+- Opus 5.5 re-routes most cyber tasks to Opus 4.8 ([Anthropic](https://www.anthropic.com/claude-opus-5-5); F).
+- Fable 5.1 finds vulnerabilities but does not develop exploits ([Anthropic](https://www.anthropic.com/claude-fable-and-mythos-5-1); F).
+
+The Cyber Verification Program has three tiers. Individuals, including bug bounty hunters, can get only **Defense Access**, and only on a paid plan. Red Team Access is organization-only. On Anthropic's internal CyScenarioBench, Defense Access still blocked most trials while Red Team Access blocked none ([CVP](https://www.anthropic.com/news/cyber-verification-program); F). Approval comes with conditions:
+- Data retention is required for misuse monitoring.
+- Defense Access users must adopt phishing-resistant MFA and stop using API keys by **15 December 2026**. Until then, keys expire every 7 days.
+- Running CVP models against customers' systems, or letting customers use something you built on them, requires separate approval. Product approvals are not yet open.
+- Grants can be narrowed or withdrawn.
+
+**OpenAI.** OpenAI's [Usage Policies](https://openai.com/policies/usage-policies/) were revised on 21 October 2026, effective **20 November 2026** (P; details S). Cyber rules sit mainly in its Cyber Abuse Policy, which disallows compromising systems. That includes dual-use activity that is malicious, unauthorized, or "exceeds granted authorization" ([OpenAI Help](https://help.openai.com/en/articles/20001258-openai-daybreak-trusted-access-for-cyber-overview); S).
+
+[Trusted Access for Cyber](https://openai.com/index/trusted-access-for-cyber/) (P; dates S) is OpenAI's identity-tiered program for defenders. It piloted on 5 February 2026 and [scaled on 14 April 2026](https://openai.com/index/scaling-trusted-access-for-cyber-defense/) to "thousands of verified individual defenders", with GPT-5.4-Cyber and GPT-5.5-Cyber tiers. Its help pages add these rules (S):
+- It "does not authorize activity outside systems you own or are explicitly permitted to test."
+- It is separate from zero data retention.
+- It must not be enabled on organizations that power customer-facing traffic.
+- Members on the most permissive models need Advanced Account Security from 1 June 2026.
+
+**Google.** Google's [Generative AI Prohibited Use Policy](https://policies.google.com/terms/generative-ai/use-policy) was last modified 17 December 2024 (P). It prohibits compromising the security of others' services, facilitating malware, and circumventing safety filters. It has **no explicit security-research carve-out**, only a general exception for educational, scientific or public-benefit work (wording S). For authorized testing on Gemini, your authorization evidence carries more weight than on the other two providers.
+
+**Open-weight models.** Open-weight models avoid provider classifiers and retention rules, but the operator carries all the responsibility. Strix recommends GLM-5.3 ([Strix](https://github.com/usestrix/strix); F), and PentAGI documents a vLLM setup with Qwen3.5 ([PentAGI](https://github.com/vxcontrol/pentagi); F). The research found no independent late-2026 head-to-head ranking of open and closed models on offensive agent tasks.
+
+**A caveat on the practitioner recipe quoted earlier.** rez0's recipe is "agent md file with lots of disclaimers about how it's approved testing, a bunch of hacking skills, /goal find a crit on target.com" ([X](https://x.com/rez0__/status/2055067183168794953); P). Stating the program, scope and your platform handle in the system prompt is useful context and keeps the agent oriented. It is not a credential. The GTG-1002 operators "told Claude that it was an employee of a legitimate cybersecurity firm" ([Anthropic](https://www.anthropic.com/news/disrupting-AI-espionage); F), and providers answered such claims with classifiers and account bans. Wording a prompt specifically to slip past a classifier is the guardrail bypass Anthropic's policy prohibits. When a legitimate validation step is blocked, there are three legitimate routes:
+- apply to a verification program (CVP or TAC)
+- use a provider whose policy, together with your authorization, covers the work
+- do that step by hand
+
+And a "/goal" pointed at any target belongs only inside a harness whose proxy confines it to that authorized target.
+
+### Legal basics: authorization in writing, safe harbor in the policy
+
+This is orientation, not legal advice, and only US and UK law were researched. The foundation is written authorization: an engagement letter that defines scope, dates, permitted techniques and contacts, or a published program policy you have joined. Tool vendors put that duty on you. Strix's README says to "only run it against systems you own or have explicit, written permission to test… You alone are responsible for obtaining authorization" ([Strix](https://github.com/usestrix/strix); F).
+
+**United States.** The Justice Department's 19 May 2022 policy on charging under the Computer Fraud and Abuse Act (CFAA) tells prosecutors they "should decline prosecution" of good-faith security research. It defines that research as access "solely for purposes of good-faith testing, investigation, and/or correction of a security flaw or vulnerability" ([Morrison Foerster](https://www.mofo.com/resources/insights/220525-cyber-crime-charging-policy); S). Commentators flag that "solely" is ambiguous. The policy is prosecutorial discretion, not immunity, and it leaves civil exposure untouched.
+
+**United Kingdom.** The Computer Misuse Act 1990 still has no research defence. The government said in December 2025 that it was considering a statutory defence ([CyberUp](https://www.cyberupcampaign.com/news/security-minister-announces-government-is-looking-at-introducing-a-statutory-defence-to-the-computer-misuse-act); S). The May 2026 proposal was reported as "much narrower" and focused on scanning ([The Record](https://therecord.media/uk-moves-to-shield-security-researchers-cybercrime); S).
+
+**Safe harbor.** Read each program's safe-harbor language. disclose.io's dioterms define **Full Safe Harbor** as four commitments ([dioterms](https://raw.githubusercontent.com/disclose/dioterms/master/README.md); F):
+1. authorization under anti-hacking laws such as the CFAA and the Computer Misuse Act
+2. exemption from anti-circumvention law
+3. exemption from the organization's own terms of service during testing
+4. acknowledgement of good faith
+
+A policy that only promises not to pursue researchers is "Partial Safe Harbor". And "bounties… are not a prerequisite for Safe Harbor".
+
+Automation adds a risk of its own. A hackbot that is hijacked, or simply buggy, and touches an out-of-scope host creates legal exposure for its operator. That makes proxy-enforced scope, and request logs that prove what was and was not sent, a legal safeguard as much as a safety one.
+
+## What to do this week
+
+These eight steps take about 10 hours and set up everything Stage 0 needs. None of them involves touching a system you do not own.
+
+1. **Build the lab skeleton.** Write a Docker Compose file with [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) and [DVWA](https://github.com/digininja/DVWA) on an internal-only network. From inside a container, prove that the internet is unreachable. Keep that proof; it is your first containment test.
+2. **Solve three labs by hand.** Create a [PortSwigger Web Security Academy](https://portswigger.net/web-security/all-labs) account and solve three Apprentice labs in different classes. Write a five-line report for each in your own words.
+3. **Read the two foundation pages.** Read Anthropic's [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) and the [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) page, or your own provider's equivalent for the model you will use. Then skim Thorsten Ball's [How to Build an Agent](https://ampcode.com/how-to-build-an-agent).
+4. **Cap your spending, then make one API call.** Set a hard monthly spend limit in your LLM provider's console before you write any code. Then make one tool-use API call and work out its cost from the [pricing page](https://platform.claude.com/docs/en/about-claude/pricing).
+5. **Draft your scope schema and rules-of-engagement template.** Do this before any agent exists. The template covers in-scope hosts, exclusions, the rate limit, banned test types, contacts and a reference to the authorization. Every later stage reads from this file.
+6. **Start your eval set.** Capture 10 request/response pairs from your lab and write down your own verdict on each. This file seeds the Stage 1 eval.
+7. **Read the rules you will live under.** That means HackerOne's [Code of Conduct](https://www.hackerone.com/policies/code-of-conduct), Bugcrowd's [Code of Conduct](https://www.bugcrowd.com/resources/hacker-resources/code-of-conduct/), your model provider's usage policy (for Anthropic, the [Usage Policy](https://www.anthropic.com/legal/aup)), and the safe-harbor and automation sections of one program you would like to join.
+8. **Subscribe and choose a target class.** Subscribe to [tl;dr sec](https://tldrsec.com/) and the [Critical Thinking podcast](https://www.youtube.com/@criticalthinkingpodcast). Then pick the one vulnerability class you will build toward in Stage 6, and add its PortSwigger topic to your Track B plan.
+
 ## Scope note
 
-This document covers the resource canon, with each item's verification status. The staged learning roadmap, evaluation ladder and guardrails sections that were originally planned are not included.
+Verification limits shape every section of this report. Tags follow the four-level F/P/S/U scheme defined at the top. No tag was upgraded when a resource reappeared in the roadmap, architecture, ladder or guardrails sections. No Reddit thread could be verified, so Reddit content appears only as second-hand mirror snapshots (S) or as subreddits to search yourself. Many platform and provider policy details, from HackerOne, Bugcrowd, Intigriti, YesWeHack, OpenAI and Google, come from search extracts rather than pages that were read. Several of those policies changed, or announced changes, within weeks of this report, so read the live page before you rely on any rule. Three elements are this report's synthesis of the cited sources, not measured results: the roadmap's week counts, the reference architecture, and the ladder's advancement threshold. The architecture has not been validated against any public hackbot implementation. Hosted-lab terms for automated agents (PortSwigger, Hack The Box, TryHackMe) were not verified. Nothing here is legal advice.
